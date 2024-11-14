@@ -27,11 +27,11 @@ impl ConwaysGrid {
         }
     }
 
-    pub fn from_alive_cells(alive_cells: Vec<Position>) -> Self {
+    pub fn from_alive_cells(alive_cells: &[Position]) -> Self {
         let mut conways_grid = Self::default();
         alive_cells
-            .into_iter()
-            .for_each(|cell| conways_grid.modify_cell(cell, CellState::Alive));
+            .iter()
+            .for_each(|cell| conways_grid.modify_cell(*cell, CellState::Alive));
         conways_grid
     }
 
@@ -122,14 +122,14 @@ mod tests {
 
     #[test]
     fn count_alive() {
-        let grid = ConwaysGrid::from_alive_cells(vec![(16, 16)]);
+        let grid = ConwaysGrid::from_alive_cells(&[(16, 16)]);
         let neighbors = grid.get_neighbor_position((17, 16));
         assert_eq!(1, ConwaysGrid::get_alive_count(&grid.grid, neighbors));
     }
 
     #[test]
     fn rule_underpopulation() {
-        let mut grid = ConwaysGrid::from_alive_cells(vec![(1, 1)]);
+        let mut grid = ConwaysGrid::from_alive_cells(&[(1, 1)]);
         if let Some(row) = grid.grid.get(1) {
             if let Some(cell) = row.get(1) {
                 assert_eq!(CellState::Alive, *cell);
@@ -144,7 +144,7 @@ mod tests {
     }
     #[test]
     fn rule_survive() {
-        let mut grid = ConwaysGrid::from_alive_cells(vec![(1, 1), (1, 2), (1, 3)]);
+        let mut grid = ConwaysGrid::from_alive_cells(&[(1, 1), (1, 2), (1, 3)]);
         if let Some(row) = grid.grid.get(1) {
             if let Some(cell) = row.get(2) {
                 assert_eq!(CellState::Alive, *cell);
@@ -160,7 +160,7 @@ mod tests {
 
     #[test]
     fn rule_overpopulation() {
-        let mut grid = ConwaysGrid::from_alive_cells(vec![(1, 1), (2, 0), (2, 1), (2, 2), (3, 1)]);
+        let mut grid = ConwaysGrid::from_alive_cells(&[(1, 1), (2, 0), (2, 1), (2, 2), (3, 1)]);
         if let Some(row) = grid.grid.get(2) {
             if let Some(cell) = row.get(1) {
                 assert_eq!(CellState::Alive, *cell);
@@ -176,7 +176,7 @@ mod tests {
 
     #[test]
     fn rule_reproduction() {
-        let mut grid = ConwaysGrid::from_alive_cells(vec![(1, 1), (1, 2), (2, 1)]);
+        let mut grid = ConwaysGrid::from_alive_cells(&[(1, 1), (1, 2), (2, 1)]);
         if let Some(row) = grid.grid.get(2) {
             if let Some(cell) = row.get(2) {
                 assert_eq!(CellState::Dead, *cell);
