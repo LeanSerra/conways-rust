@@ -87,7 +87,7 @@ async fn main() {
         ],
     ];
     let mut index: usize = 0;
-    let mut conways = ConwaysGrid::from_alive_cells(configurations[index].clone());
+    let mut conways = ConwaysGrid::from_alive_cells(&configurations[index]);
     let mut last_updated = 0_f64;
     let mut game_started = false;
     loop {
@@ -102,7 +102,7 @@ async fn main() {
                     KeyCode::Key5 => index = 4,
                     _ => {}
                 }
-                conways = ConwaysGrid::from_alive_cells(configurations[index].clone());
+                conways = ConwaysGrid::from_alive_cells(&configurations[index]);
             }
 
             for (row_num, row) in conways.grid.iter().enumerate() {
@@ -160,6 +160,10 @@ async fn main() {
 
         if is_key_pressed(KeyCode::Escape) {
             return;
+        }
+        if get_time() - last_updated > UPDATE_TIMER {
+            last_updated = get_time();
+            conways.next_iteration();
         }
 
         next_frame().await

@@ -1,4 +1,4 @@
-.PHONY: run, build, build_release, run_release, lint, clean, test
+.PHONY: run build build_release run_release lint clean test
 
 run:
 	cargo run
