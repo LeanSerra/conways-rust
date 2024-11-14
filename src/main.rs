@@ -7,6 +7,7 @@ const CELL_SIZE: f32 = 20_f32;
 const UPDATE_TIMER: f64 = 0.1;
 const PRESS_START_TEXT: &str = "Press space to start";
 const CONTROLS_TEXT: &str = "Press 1-5 in game for different configurations";
+const EXIT_KEY_TEXT: &str = "Press esc to exit";
 const SCREEN_WIDTH: i32 = 640;
 const SCREEN_HEIGHT: i32 = 640;
 
@@ -153,6 +154,12 @@ async fn main() {
                 30_f32,
                 WHITE,
             );
+
+            draw_text(EXIT_KEY_TEXT, 20_f32, 30_f32, 30_f32, WHITE);
+        }
+
+        if is_key_pressed(KeyCode::Escape) {
+            return;
         }
 
         next_frame().await
