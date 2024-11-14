@@ -47,19 +47,12 @@ impl ConwaysGrid {
     fn compute_next_state(&mut self, previous_grid: &[Vec<CellState>], (row, col): Position) {
         let neighbors: Vec<Position> = self.get_neighbor_position((row, col));
         let alive = Self::get_alive_count(previous_grid, neighbors);
-
-        let grid_row: &Vec<CellState>;
-        let cell: &CellState;
-        if let Some(some_grid_row) = self.grid.get(row) {
-            grid_row = some_grid_row;
-        } else {
+        let Some(grid_row) = self.grid.get(row) else {
             return;
-        }
-        if let Some(some_cell) = grid_row.get(col) {
-            cell = some_cell;
-        } else {
+        };
+        let Some(cell) = grid_row.get(col) else {
             return;
-        }
+        };
         match cell {
             CellState::Alive => {
                 if !(2..=3).contains(&alive) {
