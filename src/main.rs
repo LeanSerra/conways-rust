@@ -4,6 +4,7 @@ use conways::ConwaysGrid;
 use macroquad::prelude::*;
 
 const CELL_SIZE: f32 = 20_f32;
+const UPDATE_TIMER: f64 = 0.1;
 
 fn conf() -> Conf {
     Conf {
@@ -17,7 +18,23 @@ fn conf() -> Conf {
 
 #[macroquad::main(conf)]
 async fn main() {
-    let conways = ConwaysGrid::default();
+    let alive_cells = vec![
+        (1, 3),
+        (1, 4),
+        (2, 1),
+        (2, 6),
+        (3, 7),
+        (4, 1),
+        (4, 7),
+        (5, 2),
+        (5, 3),
+        (5, 4),
+        (5, 5),
+        (5, 6),
+        (5, 7),
+    ];
+    let mut conways = ConwaysGrid::from_alive_cells(alive_cells);
+    let mut last_updated = 0_f64;
     loop {
         clear_background(WHITE);
         for (row_num, row) in conways.grid.iter().enumerate() {
@@ -33,6 +50,10 @@ async fn main() {
                     },
                 );
             }
+        }
+        if get_time() - last_updated > UPDATE_TIMER {
+            last_updated = get_time();
+            conways.next_iteration();
         }
 
         next_frame().await
