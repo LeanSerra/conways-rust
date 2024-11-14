@@ -14,3 +14,7 @@ $ make
 ```
 $ make run_release
 ```
+### Run tests
+```
+$ make test
+```
