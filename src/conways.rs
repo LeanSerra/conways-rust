@@ -19,9 +19,9 @@ impl ConwaysGrid {
         Self { grid }
     }
 
-    fn modify_cell(&mut self, pos: Position, new_state: CellState) {
-        if let Some(grid_row) = self.grid.get_mut(pos.0) {
-            if let Some(cell) = grid_row.get_mut(pos.1) {
+    fn modify_cell(&mut self, (row, col): Position, new_state: CellState) {
+        if let Some(grid_row) = self.grid.get_mut(row) {
+            if let Some(cell) = grid_row.get_mut(col) {
                 *cell = new_state;
             }
         }
@@ -44,21 +44,20 @@ impl ConwaysGrid {
         }
     }
 
-    fn compute_next_state(&mut self, previous_grid: &[Vec<CellState>], pos: Position) {
-        let neighbors: Vec<Position> = self.get_neighbor_position(pos);
+    fn compute_next_state(&mut self, previous_grid: &[Vec<CellState>], (row, col): Position) {
+        let neighbors: Vec<Position> = self.get_neighbor_position((row, col));
         let alive = Self::get_alive_count(previous_grid, neighbors);
-        let (row, col) = pos;
-        if let Some(row) = self.grid.get(row) {
-            if let Some(cell) = row.get(col) {
+        if let Some(grid_row) = self.grid.get(row) {
+            if let Some(cell) = grid_row.get(col) {
                 match cell {
                     CellState::Alive => {
                         if !(2..=3).contains(&alive) {
-                            self.modify_cell(pos, CellState::Dead);
+                            self.modify_cell((row, col), CellState::Dead);
                         }
                     }
                     CellState::Dead => {
                         if alive == 3 {
-                            self.modify_cell(pos, CellState::Alive);
+                            self.modify_cell((row, col), CellState::Alive);
                         }
                     }
                 }
@@ -66,8 +65,7 @@ impl ConwaysGrid {
         }
     }
 
-    fn get_neighbor_position(&self, pos: Position) -> Vec<Position> {
-        let (row, col) = (pos.0, pos.1);
+    fn get_neighbor_position(&self, (row, col): Position) -> Vec<Position> {
         let mut neighbors: Vec<Position> = Vec::new();
         // Top
         if row > 0 {
@@ -107,8 +105,7 @@ impl ConwaysGrid {
 
     fn get_alive_count(previous_grid: &[Vec<CellState>], neighbors: Vec<Position>) -> usize {
         let mut count: usize = 0;
-        for pos in neighbors {
-            let (row, col) = pos;
+        for (row, col) in neighbors {
             if let Some(grid_row) = previous_grid.get(row) {
                 if let Some(CellState::Alive) = grid_row.get(col) {
                     count += 1;
