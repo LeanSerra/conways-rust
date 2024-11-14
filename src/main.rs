@@ -33,7 +33,7 @@ async fn main() {
         (5, 6),
         (5, 7),
     ];
-    let mut conways = ConwaysGrid::from_alive_cells(alive_cells);
+    let mut conways = ConwaysGrid::from_alive_cells(&alive_cells);
     let mut last_updated = 0_f64;
     loop {
         clear_background(WHITE);
