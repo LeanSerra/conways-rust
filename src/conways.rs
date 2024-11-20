@@ -86,7 +86,6 @@ impl ConwaysGrid {
             .filter_map(|(offset_x, offset_y)| {
                 let new_x = (row as isize + *offset_x) as usize;
                 let new_y = (col as isize + *offset_y) as usize;
-                // println!("new_x {new_x}, new_y {new_y}");
                 if new_x < ROWS && new_y < COLS {
                     Some((new_x, new_y))
                 } else {
