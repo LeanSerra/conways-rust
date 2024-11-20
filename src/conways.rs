@@ -70,41 +70,30 @@ impl ConwaysGrid {
     }
 
     fn get_neighbor_position(&self, (row, col): Position) -> Vec<Position> {
-        let mut neighbors: Vec<Position> = Vec::new();
-        // Top
-        if row > 0 {
-            // Left
-            if col > 0 {
-                neighbors.push((row - 1, col - 1));
-            }
-            if col + 1 < COLS {
-                neighbors.push((row - 1, col + 1));
-            }
-            // Mid
-            neighbors.push((row - 1, col));
-        }
-        // Mid Left
-        if col > 0 {
-            neighbors.push((row, col - 1));
-        }
-        // Mid Right
-        if col + 1 < COLS {
-            neighbors.push((row, col + 1));
-        }
-        // Bottom
-        if row + 1 < ROWS {
-            // Left
-            if col > 0 {
-                neighbors.push((row + 1, col - 1));
-            }
-            // Right
-            if col + 1 < COLS {
-                neighbors.push((row + 1, col + 1));
-            }
-            // Mid
-            neighbors.push((row + 1, col));
-        }
-        neighbors
+        let offsets = [
+            (-1, -1),
+            (-1, 0),
+            (0, -1),
+            (-1, 1),
+            (0, 1),
+            (1, -1),
+            (1, 0),
+            (1, 1),
+        ];
+
+        offsets
+            .iter()
+            .filter_map(|(offset_x, offset_y)| {
+                let new_x = (row as isize + *offset_x) as usize;
+                let new_y = (col as isize + *offset_y) as usize;
+                // println!("new_x {new_x}, new_y {new_y}");
+                if new_x < ROWS && new_y < COLS {
+                    Some((new_x, new_y))
+                } else {
+                    None
+                }
+            })
+            .collect()
     }
 
     fn get_alive_count(previous_grid: &[Vec<CellState>], neighbors: Vec<Position>) -> usize {
