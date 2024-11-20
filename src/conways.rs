@@ -13,12 +13,14 @@ pub enum CellState {
     Alive,
 }
 
-impl ConwaysGrid {
-    pub fn default() -> Self {
+impl Default for ConwaysGrid {
+    fn default() -> Self {
         let grid = vec![vec![CellState::Dead; ROWS]; COLS];
         Self { grid }
     }
+}
 
+impl ConwaysGrid {
     fn modify_cell(&mut self, (row, col): Position, new_state: CellState) {
         if let Some(grid_row) = self.grid.get_mut(row) {
             if let Some(cell) = grid_row.get_mut(col) {
