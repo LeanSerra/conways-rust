@@ -4,7 +4,7 @@ use conways::{ConwaysGrid, Position};
 use macroquad::prelude::*;
 
 const CELL_SIZE: f32 = 20_f32;
-const UPDATE_TIMER: f64 = 0.1;
+const TICK_RATE: f32 = 1_f32 / 10_f32; // 10hz
 const PRESS_START_TEXT: &str = "Press space to start";
 const CONTROLS_TEXT: &str = "Press 1-5 in game for different configurations";
 const EXIT_KEY_TEXT: &str = "Press esc to exit";
@@ -26,11 +26,12 @@ async fn main() {
     let configurations = initial_configurations();
     let mut index: usize = 0;
     let mut conways = ConwaysGrid::from_alive_cells(&configurations[index]);
-    let mut last_updated = 0_f64;
     let mut game_started = false;
+    let mut accumulated_delta_time = 0_f32;
     loop {
         clear_background(WHITE);
         if game_started {
+            accumulated_delta_time += get_frame_time();
             if let Some(last_keypress) = get_last_key_pressed() {
                 match last_keypress {
                     KeyCode::Key1 => index = 0,
@@ -40,6 +41,8 @@ async fn main() {
                     KeyCode::Key5 => index = 4,
                     _ => {}
                 }
+                // Reset accumulated delta time when we initialize the grid
+                accumulated_delta_time = 0_f32;
                 conways = ConwaysGrid::from_alive_cells(&configurations[index]);
             }
 
@@ -57,8 +60,9 @@ async fn main() {
                     );
                 }
             }
-            if get_time() - last_updated > UPDATE_TIMER {
-                last_updated = get_time();
+
+            if accumulated_delta_time > TICK_RATE {
+                accumulated_delta_time -= TICK_RATE;
                 conways.next_iteration();
             }
         } else {
@@ -98,10 +102,6 @@ async fn main() {
 
         if is_key_pressed(KeyCode::Escape) {
             return;
-        }
-        if get_time() - last_updated > UPDATE_TIMER {
-            last_updated = get_time();
-            conways.next_iteration();
         }
 
         next_frame().await
