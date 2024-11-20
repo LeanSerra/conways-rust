@@ -41,14 +41,14 @@ impl ConwaysGrid {
         let previous_grid = self.grid.clone();
         for row in 0..ROWS {
             for col in 0..COLS {
-                self.compute_next_state(&previous_grid, (row, col));
+                let alive =
+                    Self::get_alive_count(&previous_grid, self.get_neighbor_position((row, col)));
+                self.compute_next_state(alive, (row, col));
             }
         }
     }
 
-    fn compute_next_state(&mut self, previous_grid: &[Vec<CellState>], (row, col): Position) {
-        let neighbors: Vec<Position> = self.get_neighbor_position((row, col));
-        let alive = Self::get_alive_count(previous_grid, neighbors);
+    fn compute_next_state(&mut self, alive_count: usize, (row, col): Position) {
         let Some(grid_row) = self.grid.get(row) else {
             return;
         };
@@ -57,12 +57,12 @@ impl ConwaysGrid {
         };
         match cell {
             CellState::Alive => {
-                if !(2..=3).contains(&alive) {
+                if !(2..=3).contains(&alive_count) {
                     self.modify_cell((row, col), CellState::Dead);
                 }
             }
             CellState::Dead => {
-                if alive == 3 {
+                if alive_count == 3 {
                     self.modify_cell((row, col), CellState::Alive);
                 }
             }
