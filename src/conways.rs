@@ -3,6 +3,7 @@ const COLS: usize = 32;
 
 pub type Position = (usize, usize);
 
+#[derive(Clone)]
 pub struct ConwaysGrid {
     pub grid: Vec<Vec<CellState>>,
 }
@@ -38,11 +39,10 @@ impl ConwaysGrid {
     }
 
     pub fn next_iteration(&mut self) {
-        let previous_grid = self.grid.clone();
+        let previous_grid = self.clone();
         for row in 0..ROWS {
             for col in 0..COLS {
-                let alive =
-                    Self::get_alive_count(&previous_grid, self.get_neighbor_position((row, col)));
+                let alive = previous_grid.get_alive_count(self.get_neighbor_position((row, col)));
                 self.compute_next_state(alive, (row, col));
             }
         }
@@ -95,10 +95,10 @@ impl ConwaysGrid {
             .collect()
     }
 
-    fn get_alive_count(previous_grid: &[Vec<CellState>], neighbors: Vec<Position>) -> usize {
+    fn get_alive_count(&self, neighbors: Vec<Position>) -> usize {
         let mut count: usize = 0;
         for (row, col) in neighbors {
-            if let Some(grid_row) = previous_grid.get(row) {
+            if let Some(grid_row) = self.grid.get(row) {
                 if let Some(CellState::Alive) = grid_row.get(col) {
                     count += 1;
                 }
@@ -116,7 +116,7 @@ mod tests {
     fn count_alive() {
         let grid = ConwaysGrid::from_alive_cells(&[(16, 16)]);
         let neighbors = grid.get_neighbor_position((17, 16));
-        assert_eq!(1, ConwaysGrid::get_alive_count(&grid.grid, neighbors));
+        assert_eq!(1, grid.get_alive_count(neighbors));
     }
 
     #[test]
